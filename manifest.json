@@ -1,0 +1,10 @@
+{
+  "name":"FamilyTracker",
+  "short_name":"FamilyTracker",
+  "start_url":"./",
+  "display":"standalone",
+  "background_color":"#f3f7fa",
+  "theme_color":"#087f75",
+  "description":"Rozilik asosidagi oilaviy aloqa prototipi",
+  "icons":[{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
