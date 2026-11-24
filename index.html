@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#087f75">
+<title>FamilyTracker 3.0</title>
+<style>
+:root{
+  --teal:#087f75;--teal2:#13a092;--bg:#f1f7f8;--card:#fff;--ink:#23343c;--muted:#6b7b82;
+  --line:#e2ebed;--soft:#e5f4f2;--field:#fff;--danger:#b3372f;--danger-bg:#fdecea;--warn-bg:#fff8e8;--warn-line:#f2e1b5;--warn-ink:#6a5522;
+  --sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px)
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#0f1b1e;--card:#172529;--ink:#e6f0f1;--muted:#93a5ab;--line:#26393e;--soft:#1c3a38;--field:#1c2d32;--danger:#ff8b82;--danger-bg:#3a1f1d;--warn-bg:#2d2616;--warn-line:#4a3d1c;--warn-ink:#e9d49a}
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding-bottom:calc(76px + var(--sab))}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--teal2);outline-offset:2px}
+
+.top{background:linear-gradient(135deg,#08776e,#13a092);color:#fff;padding:calc(18px + var(--sat)) 18px 24px;border-radius:0 0 26px 26px}
+.toprow{display:flex;align-items:center;gap:12px;max-width:680px;margin:auto}
+.logo{width:46px;height:46px;border-radius:15px;background:#ffffff25;display:grid;place-items:center;font-size:24px}
+.top h1{font-size:22px;margin:0}
+.top p{margin:3px 0 0;color:#d7f2ee;font-size:13px}
+
+.main{max-width:680px;margin:auto;padding:14px 15px}
+.tab{display:none}.tab.on{display:block}
+
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:4px}
+.stat{background:var(--card);border-radius:17px;padding:14px;border:1px solid var(--line)}
+.stat strong{font-size:24px;color:var(--teal);display:block}
+.stat span{font-size:12px;color:var(--muted)}
+.dark-ico{color:var(--teal)}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;margin:12px 0}
+.card h2{margin:0 0 12px;font-size:18px;color:var(--teal)}
+
+label.f{display:block;font-size:13px;color:var(--muted);margin-top:10px}
+input,select,textarea{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:12px;background:var(--field);font-size:16px;margin-top:5px}
+textarea{resize:vertical;min-height:64px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:380px){.row2{grid-template-columns:1fr}}
+
+.btn{border:0;border-radius:13px;padding:13px 16px;font-size:15px;font-weight:700;cursor:pointer;min-height:46px}
+.primary{background:var(--teal);color:#fff;width:100%;margin-top:14px}
+.ghost{background:var(--soft);color:var(--teal)}
+.danger{background:var(--danger-bg);color:var(--danger)}
+.btn:active{transform:scale(.98)}
+.btns{display:flex;gap:10px;flex-wrap:wrap}.btns .btn{flex:1}
+
+.search{margin:0 0 6px;background:var(--field)}
+.member{display:flex;gap:12px;align-items:center;padding:12px;background:var(--bg);border:1px solid var(--line);border-radius:16px;margin-top:10px}
+.avatar{width:46px;height:46px;flex:0 0 46px;border-radius:16px;display:grid;place-items:center;font-size:18px;font-weight:800;color:#fff}
+.info{flex:1;min-width:0}
+.name{font-weight:700;overflow-wrap:anywhere}
+.sub{font-size:13px;color:var(--muted);margin-top:2px;overflow-wrap:anywhere}
+.tag{display:inline-block;background:var(--soft);color:var(--teal);padding:3px 9px;border-radius:99px;font-size:12px;margin-top:6px}
+.actions{display:flex;flex-direction:column;gap:6px}
+.ib{width:42px;height:42px;border-radius:12px;border:0;background:var(--soft);color:var(--teal);font-size:18px;display:grid;place-items:center;cursor:pointer;text-decoration:none}
+.ib.more{background:transparent;color:var(--muted);font-size:20px}
+
+.empty{text-align:center;padding:26px 12px;color:var(--muted);line-height:1.5}
+.empty b{display:block;font-size:16px;color:var(--ink);margin-bottom:4px}
+
+.notice{padding:13px;border-radius:14px;background:var(--warn-bg);border:1px solid var(--warn-line);color:var(--warn-ink);font-size:14px;line-height:1.55}
+.note{color:var(--muted);font-size:14px;line-height:1.55}
+
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;padding:6px 8px calc(6px + var(--sab));z-index:5}
+.bar button{flex:1;background:none;border:0;padding:8px 4px;border-radius:12px;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
+.bar button span{font-size:20px}
+.bar button.on{color:var(--teal);background:var(--soft)}
+
+dialog{border:0;border-radius:20px;padding:20px;width:min(92vw,420px);background:var(--card);color:var(--ink)}
+dialog::backdrop{background:#0008}
+dialog h3{margin:0 0 6px;font-size:18px}
+dialog p{margin:0 0 4px;color:var(--muted);line-height:1.5}
+
+.toast{position:fixed;left:50%;bottom:calc(88px + var(--sab));transform:translate(-50%,20px);background:#23343c;color:#fff;padding:11px 16px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:20;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="toprow">
+    <div class="logo">💚</div>
+    <div><h1>FamilyTracker</h1><p>Oilaviy aloqa va xavfsizlik</p></div>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- A'zolar -->
+  <section class="tab on" id="tab-members">
+    <div class="stats">
+      <div class="stat"><strong id="count">0</strong><span>Oila a’zolari</span></div>
+      <div class="stat"><strong id="phoneCount">0</strong><span>Telefon raqami bor</span></div>
+    </div>
+
+    <div class="card">
+      <h2>Yangi a’zo</h2>
+      <label class="f" for="memberName">Ism</label>
+      <input id="memberName" placeholder="Masalan, Dilnoza" autocomplete="off" maxlength="60">
+      <div class="row2">
+        <div>
+          <label class="f" for="relation">Qarindoshlik</label>
+          <select id="relation">
+            <option value="">Tanlanmagan</option>
+            <option>Ota</option><option>Ona</option><option>Farzand</option>
+            <option>Aka / uka</option><option>Opa / singil</option><option>Boshqa</option>
+          </select>
+        </div>
+        <div>
+          <label class="f" for="phone">Telefon</label>
+          <input id="phone" type="tel" inputmode="tel" placeholder="+998 90 123 45 67" maxlength="20">
+        </div>
+      </div>
+      <button class="btn primary" id="addBtn">Qo‘shish</button>
+    </div>
+
+    <input class="search" id="search" type="search" placeholder="Ism yoki qarindoshlik bo‘yicha qidirish" aria-label="Qidirish">
+    <div id="memberList"></div>
+  </section>
+
+  <!-- Zaxira -->
+  <section class="tab" id="tab-backup">
+    <div class="card">
+      <h2>Zaxira nusxa</h2>
+      <p class="note">Ro‘yxat faqat shu qurilmada saqlanadi. Ilova o‘chirilsa yoki ma’lumotlar tozalansa, ro‘yxat yo‘qoladi. Zaxira faylini saqlab qo‘ying.</p>
+      <div class="btns">
+        <button class="btn ghost" id="exportBtn">Faylga saqlash</button>
+        <button class="btn ghost" id="importBtn">Fayldan tiklash</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
+    </div>
+    <div class="card">
+      <h2>Ro‘yxatni tozalash</h2>
+      <p class="note">Barcha a’zolar o‘chiriladi. Bu amalni qaytarib bo‘lmaydi.</p>
+      <button class="btn danger primary" id="clearBtn">Hammasini o‘chirish</button>
+    </div>
+  </section>
+
+  <!-- Maxfiylik -->
+  <section class="tab" id="tab-privacy">
+    <div class="card">
+      <h2>Maxfiylik</h2>
+      <div class="notice">Bu ilova telefonlarni kuzatmaydi va GPS ma’lumotini yig‘maydi. Joylashuvni ulashish faqat har bir odamning o‘zi xohlasa va qurilmasida ruxsat bersa amalga oshirilishi mumkin.</div>
+      <p class="note">Ma’lumotlar internetga yuborilmaydi va hech qanday serverda saqlanmaydi.</p>
+    </div>
+    <div class="card">
+      <h2>Joylashuv</h2>
+      <p class="note">Joylashuv funksiyasi hozircha mavjud emas. Kelajakda u faqat har bir a’zoning o‘z roziligi bilan, ochiq bildirishnoma ko‘rsatilgan holda qo‘shilishi mumkin.</p>
+    </div>
+  </section>
+
+</main>
+
+<nav class="bar" aria-label="Bo‘limlar">
+  <button class="on" data-tab="members"><span>👥</span>A’zolar</button>
+  <button data-tab="backup"><span>💾</span>Zaxira</button>
+  <button data-tab="privacy"><span>🔐</span>Maxfiylik</button>
+</nav>
+
+<dialog id="editDlg">
+  <h3 id="editTitle">A’zoni tahrirlash</h3>
+  <label class="f" for="eName">Ism</label>
+  <input id="eName" maxlength="60" autocomplete="off">
+  <div class="row2">
+    <div><label class="f" for="eRel">Qarindoshlik</label>
+      <select id="eRel">
+        <option value="">Tanlanmagan</option>
+        <option>Ota</option><option>Ona</option><option>Farzand</option>
+        <option>Aka / uka</option><option>Opa / singil</option><option>Boshqa</option>
+      </select></div>
+    <div><label class="f" for="ePhone">Telefon</label><input id="ePhone" type="tel" inputmode="tel" maxlength="20"></div>
+  </div>
+  <label class="f" for="eNote">Izoh</label>
+  <textarea id="eNote" maxlength="200" placeholder="Ixtiyoriy"></textarea>
+  <div class="btns" style="margin-top:14px">
+    <button class="btn ghost" id="eCancel">Bekor qilish</button>
+    <button class="btn primary" id="eSave" style="margin-top:0">Saqlash</button>
+  </div>
+  <button class="btn danger" id="eDelete" style="width:100%;margin-top:10px">A’zoni o‘chirish</button>
+</dialog>
+
+<dialog id="confirmDlg">
+  <h3 id="cTitle"></h3>
+  <p id="cText"></p>
+  <div class="btns" style="margin-top:16px">
+    <button class="btn ghost" id="cNo">Bekor qilish</button>
+    <button class="btn danger" id="cYes">O‘chirish</button>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const KEY='familytracker_members_v2';
+const $=id=>document.getElementById(id);
+const COLORS=['#087f75','#2b6cb0','#7b4fa0','#c0572b','#a8325e','#4a7c2c','#8a6d1f'];
+let editId=null;
+
+/* ---------- Saqlash ---------- */
+function load(){
+  try{
+    let data=localStorage.getItem(KEY);
+    if(data===null){
+      for(const k of ['familytracker_members','familytracker_members_v1']){
+        const old=localStorage.getItem(k);if(old!==null){data=old;break}
+      }
+    }
+    const arr=JSON.parse(data||'[]');
+    return Array.isArray(arr)?arr.map(clean).filter(Boolean):[];
+  }catch{return []}
+}
+function clean(m){
+  if(!m||typeof m!=='object')return null;
+  const name=String(m.name||'').trim();
+  if(!name)return null;
+  return{
+    id:m.id||('m'+Date.now().toString(36)+Math.random().toString(36).slice(2,7)),
+    name:name.slice(0,60),
+    relation:String(m.relation||'').slice(0,30),
+    phone:String(m.phone||'').slice(0,20),
+    note:String(m.note||'').slice(0,200)
+  };
+}
+function save(a){
+  try{localStorage.setItem(KEY,JSON.stringify(a));return true}
+  catch{toast('Saqlab bo‘lmadi. Xotira to‘lgan bo‘lishi mumkin.');return false}
+}
+
+/* ---------- Yordamchilar ---------- */
+function initials(n){const p=n.trim().split(/\s+/);return((p.length>1?p[0][0]+p[1][0]:p[0].slice(0,2))).toUpperCase()}
+function colorFor(n){let h=0;for(const c of n)h=(h*31+c.charCodeAt(0))>>>0;return COLORS[h%COLORS.length]}
+function telHref(p){return 'tel:'+p.replace(/[^\d+]/g,'')}
+let tt;function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('show'),2200)}
+function ask(title,text,yesLabel){
+  return new Promise(res=>{
+    $('cTitle').textContent=title;$('cText').textContent=text;$('cYes').textContent=yesLabel||'O‘chirish';
+    const d=$('confirmDlg');
+    const done=v=>{d.close();$('cYes').onclick=$('cNo').onclick=null;res(v)};
+    $('cYes').onclick=()=>done(true);$('cNo').onclick=()=>done(false);
+    d.showModal();
+  });
+}
+
+/* ---------- Ro'yxat ---------- */
+function render(){
+  const all=load(),q=$('search').value.trim().toLowerCase(),box=$('memberList');
+  $('count').textContent=all.length;
+  $('phoneCount').textContent=all.filter(m=>m.phone).length;
+  box.innerHTML='';
+  const shown=all.filter(m=>m.name.toLowerCase().includes(q)||m.relation.toLowerCase().includes(q));
+  if(!shown.length){
+    const e=document.createElement('div');e.className='empty';
+    const b=document.createElement('b');
+    b.textContent=all.length?'Hech narsa topilmadi':'Hali a’zo yo‘q';
+    e.append(b,all.length?'Boshqa so‘z bilan qidirib ko‘ring.':'Yuqoridagi formada birinchi a’zoni qo‘shing.');
+    box.append(e);return;
+  }
+  shown.forEach(m=>{
+    const card=document.createElement('div');card.className='member';
+    const av=document.createElement('div');av.className='avatar';av.textContent=initials(m.name);av.style.background=colorFor(m.name);
+    const info=document.createElement('div');info.className='info';
+    const nm=document.createElement('div');nm.className='name';nm.textContent=m.name;
+    info.append(nm);
+    if(m.phone||m.note){const s=document.createElement('div');s.className='sub';s.textContent=m.phone||m.note;info.append(s)}
+    if(m.relation){const t=document.createElement('span');t.className='tag';t.textContent=m.relation;info.append(t)}
+    const act=document.createElement('div');act.className='actions';
+    if(m.phone){const a=document.createElement('a');a.className='ib';a.href=telHref(m.phone);a.textContent='📞';a.setAttribute('aria-label',m.name+' ga qo‘ng‘iroq qilish');act.append(a)}
+    const ed=document.createElement('button');ed.className='ib'+(m.phone?' more':'');ed.textContent=m.phone?'⋯':'✏️';ed.setAttribute('aria-label',m.name+' ni tahrirlash');ed.onclick=()=>openEdit(m.id);
+    act.append(ed);
+    card.append(av,info,act);box.append(card);
+  });
+}
+
+function addMember(){
+  const n=$('memberName'),name=n.value.trim();
+  if(!name){toast('A’zo ismini kiriting');n.focus();return}
+  const a=load();
+  a.push(clean({name,relation:$('relation').value,phone:$('phone').value.trim()}));
+  if(save(a)){n.value='';$('relation').value='';$('phone').value='';render();toast('A’zo qo‘shildi')}
+}
+
+/* ---------- Tahrirlash ---------- */
+function openEdit(id){
+  const m=load().find(x=>x.id===id);if(!m)return;
+  editId=id;
+  $('eName').value=m.name;$('eRel').value=m.relation;$('ePhone').value=m.phone;$('eNote').value=m.note;
+  $('editDlg').showModal();
+}
+function saveEdit(){
+  const name=$('eName').value.trim();
+  if(!name){toast('Ism bo‘sh bo‘lmasligi kerak');$('eName').focus();return}
+  const a=load(),i=a.findIndex(x=>x.id===editId);
+  if(i<0){$('editDlg').close();return}
+  a[i]=clean({...a[i],name,relation:$('eRel').value,phone:$('ePhone').value.trim(),note:$('eNote').value.trim()});
+  if(save(a)){$('editDlg').close();render();toast('Saqlandi')}
+}
+async function deleteEdit(){
+  const a=load(),m=a.find(x=>x.id===editId);if(!m)return;
+  if(await ask(m.name+' o‘chirilsinmi?','A’zo ro‘yxatdan olib tashlanadi.')){
+    if(save(a.filter(x=>x.id!==editId))){$('editDlg').close();render();toast('A’zo o‘chirildi')}
+  }
+}
+
+/* ---------- Zaxira ---------- */
+function exportData(){
+  const blob=new Blob([JSON.stringify({app:'FamilyTracker',version:3,members:load()},null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='familytracker-zaxira-'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  toast('Zaxira fayli tayyorlandi');
+}
+function importData(file){
+  const r=new FileReader();
+  r.onload=async()=>{
+    try{
+      const j=JSON.parse(r.result);
+      const list=(Array.isArray(j)?j:j.members||[]).map(clean).filter(Boolean);
+      if(!list.length){toast('Faylda a’zolar topilmadi');return}
+      if(await ask('Ro‘yxat almashtirilsinmi?','Hozirgi ro‘yxat o‘rniga fayldagi '+list.length+' ta a’zo yoziladi.','Tiklash')){
+        if(save(list)){render();toast(list.length+' ta a’zo tiklandi')}
+      }
+    }catch{toast('Fayl o‘qilmadi. To‘g‘ri zaxira faylini tanlang')}
+  };
+  r.readAsText(file);
+}
+async function clearAll(){
+  if(await ask('Hamma a’zo o‘chirilsinmi?','Bu amalni qaytarib bo‘lmaydi.','Hammasini o‘chirish')){
+    if(save([])){render();toast('Ro‘yxat tozalandi')}
+  }
+}
+
+/* ---------- Bo'limlar ---------- */
+document.querySelectorAll('.bar button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.bar button').forEach(x=>x.classList.toggle('on',x===b));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.id==='tab-'+b.dataset.tab));
+  window.scrollTo(0,0);
+});
+
+$('addBtn').onclick=addMember;
+$('memberName').addEventListener('keydown',e=>{if(e.key==='Enter')addMember()});
+$('search').addEventListener('input',render);
+$('eSave').onclick=saveEdit;$('eCancel').onclick=()=>$('editDlg').close();$('eDelete').onclick=deleteEdit;
+$('exportBtn').onclick=exportData;
+$('importBtn').onclick=()=>$('importFile').click();
+$('importFile').onchange=e=>{if(e.target.files[0])importData(e.target.files[0]);e.target.value=''};
+$('clearBtn').onclick=clearAll;
+
+render();
+</script>
+</body>
+</html>
